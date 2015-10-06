@@ -40,13 +40,12 @@ http.createServer(function(req, res) {
         //window.show(im);
 	//im.save('./resources/'+i+'.jpg');
 	//fs.readFile(__dirname + '/resources/'+ i + '.jpg', sendJPGData);
-	
-	toTransmit = new Buffer(im);	
+	toTransmit = new Buffer(im.toBuffer({ext: ".jpg", jpegQuality: 80}), "base64");	
 	
 	console.log("Is it a buffer?", Buffer.isBuffer(toTransmit));
-	console.log("Lenght of buffer ", toTransmit.lenght);
-	
-	//sendJPGData(toTransmit);
+	console.log("PREVIEW =>|", toTransmit.slice(0,50).toString(),"|<= END OF PREVIEW");
+	console.log("Lenght: ", toTransmit.toString().length, "bytelenght:",   Buffer.byteLength(toTransmit, 'utf8') );
+	sendJPGData(toTransmit);
 	
 	i++;
       }
