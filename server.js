@@ -10,17 +10,21 @@ var mjpegServer = require('./lib/mjpeg-server');
 
 var camera = new cv.VideoCapture(0);
 //var window = new cv.NamedWindow('Video', 0)
+var imageW = 320,
+	imageH = 240;
 
+camera.setWidth(imageW);
+camera.setHeight(imageH);
 
 http.createServer(function(req, res) {
 	//console.log("Got request");
 
 	mjpegReqHandler = mjpegServer.createReqHandler(req, res);
 	var i = 0;
-	var timer = setInterval(captureImg, 150);
+	var timer = setInterval(captureImg, 24);
 
 	function captureImg() {
-		var toTransmit ="";
+		var toTransmit = "";
 		var tempFile = "";
 		camera.read(function(err, im) {
 			if (err) throw err;
@@ -30,53 +34,35 @@ http.createServer(function(req, res) {
 			var width = im.width();
 			var height = im.height();
 			var c = ["255", "130", "0"];
-			im.flip(1);
+			im.rotate(180);
+			//im.convertGrayscale();
+			im.putText("f: " + i, 15, height - 10, "CV_FONT_HERSHEY_SIMPLEX", [100, 200, 50], 0.5);
+			im.putText("p:", width - 50, height - 50, "CV_FONT_HERSHEY_SIMPLEX", [100, 200, 50], 0.5);
+			im.putText("b:", width - 50, height - 30, "CV_FONT_HERSHEY_SIMPLEX", [100, 200, 50], 0.5);
+			im.putText("r:", width - 50, height - 10, "CV_FONT_HERSHEY_SIMPLEX", [100, 200, 50], 0.5);
 
-			im.putText(i, 50, height - 50, "CV_FONT_HERSHEY_SIMPLEX", [0, 200, 50], 0.5);
-			im.putText("image: " + im.size(), 50, height - 150, 'HERSEY_SCRIPT_SIMPLEX', [0, 150, 150], 0.5, 9);
-			im.line([0, 0], [200, 200])
+
+			im.line([width / 2 - 20, height / 2], [width / 2 - 40, height / 2])
+			im.line([width / 2 + 20, height / 2], [width / 2 + 40, height / 2])
+
 			if (im.size()[0] > 0 && im.size()[1] > 0) {
-				//window.show(im);
-				//im.save('./resources/'+i+'OC.jpg');
-				
+
 				toTransmit = im.toBufferAsync(sendJPGData);
-					//cv.readImage(toTransmit,sendJPGData);
-				//fs.readFile(__dirname + '/resources/'+ i + 'OC.jpg', sendJPGData);
-				/*				
-				console.log("File: ", i);
-				console.log("Is it a buffer?", Buffer.isBuffer(toTransmit));
-				console.log("Lenght: ", toTransmit.toString().length, "bytelenght:", Buffer.byteLength(toTransmit, 'utf8'));
-				console.log("PREVIEW FIRST 50 CHARS=>|", toTransmit.slice(0, 50).toString(), "|<= END OF PREVIEW");
-				console.log("PREVIEW LAST 50 CHARS=>|", toTransmit.slice(toTransmit.length - 50, toTransmit.length).toString(), "|<= END OF PREVIEW");
-*/
-				//sendJPGData(toTransmit);
+
 
 				i++;
 			}
-			//window.blockingWaitKey(0, 50);
 		});
 
 	}
 
 
 
-	function filePreview(err, data) {
-		console.log("OC PREVIEW FIRST 50 CHARS=>|", data.slice(0, 50).toString(), "|<= END OF PREVIEW");
-		console.log("OC PREVIEW LAST 50 CHARS=>|", data.slice(data.length - 50, data.length).toString(), "|<= END OF PREVIEW");
-
-	}
-
+	
 	function sendJPGData(err, data) {
-		mjpegReqHandler.write(data, function() {
-			//checkIfFinished();
-		});
+		mjpegReqHandler.write(data, function() {});
 	}
 
-	function postConversion(err, data) {
-	
-		console.log("Converted");
-	
-	}	
 	function checkIfFinished() {
 		if (i > 100) {
 			clearInterval(timer);
