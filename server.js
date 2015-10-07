@@ -21,7 +21,7 @@ http.createServer(function(req, res) {
 
 	mjpegReqHandler = mjpegServer.createReqHandler(req, res);
 	var i = 0;
-	var timer = setInterval(captureImg, 24);
+	var timer = setInterval(captureImg, 100);
 
 	function captureImg() {
 		var toTransmit = "";
@@ -42,12 +42,12 @@ http.createServer(function(req, res) {
 			im.putText("r:", width - 50, height - 10, "CV_FONT_HERSHEY_SIMPLEX", [100, 200, 50], 0.5);
 
 
-			im.line([width / 2 - 20, height / 2], [width / 2 - 40, height / 2])
-			im.line([width / 2 + 20, height / 2], [width / 2 + 40, height / 2])
-
+			
+			drawCrossHair(im);
 			if (im.size()[0] > 0 && im.size()[1] > 0) {
 
-				toTransmit = im.toBufferAsync(sendJPGData);
+				//toTransmit = im.toBufferAsync(sendJPGData);
+				im.toBufferAsync(sendJPGData);
 
 
 				i++;
@@ -70,4 +70,15 @@ http.createServer(function(req, res) {
 			console.log('End Request');
 		}
 	}
+
+	function drawCrossHair(im)
+		{
+			im.line([im.width() / 2 - 20, im.height() / 2], [im.width() / 2 - 40, im.height() / 2])
+			im.line([im.width() / 2 + 20, im.height() / 2], [im.width() / 2 + 40, im.height() / 2])
+			im.line([im.width() / 2, im.height() / 2 - 20], [im.width() / 2, im.height() / 2- 40])
+		im.line([im.width() / 2, im.height() / 2 + 20], [im.width() / 2, im.height() / 2 + 40])
+
+	
+		}
+
 }).listen(9090);
