@@ -1,5 +1,5 @@
 {
-  "name": "MJPEG stremaer",
+  "name": "MJPEG streamer",
   "version": "0.0.1",
   "description": "Node application to test streaming",
   "main": "server.js",
