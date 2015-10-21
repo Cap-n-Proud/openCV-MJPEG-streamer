@@ -1,7 +1,7 @@
 //sudo modprobe bcm2835-v4l2
 //Based on https://github.com/gluxon/node-mjpeg-server.git
 
-var cv = require('/usr/local/lib/node_modules/opencv');
+var cv = require('opencv');
 var i = 0;
 
 var http = require('http');
